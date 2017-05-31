@@ -1,7 +1,7 @@
     org 07c00h 
     jmp short LABEL_START
     nop
-    OSCodeSec           db 5
+    OSCodeSec           equ 5
 
     BS_OEMName          db 'ForrestY'
     BPB_BytePerSec      dw 512          ;每个扇区的大小
@@ -49,12 +49,13 @@ repeat:
 DispStr:
     mov ax, BootMessage
     mov bp, ax
-    mov cx, 16
+    mov cx, 10
     mov ax, 1301h
     mov bx, 000ch
     mov dl, 0
     int 10h
     ret
+
 
 ReadSector: ;ax 扇区号  cl 读取的扇区数 es:bx 内存位置
     push bp
@@ -77,10 +78,11 @@ ReadSector: ;ax 扇区号  cl 读取的扇区数 es:bx 内存位置
     mov al, byte [bp - 2]
     int 13h 
     jc .GoOnReading
+    call DispStr
     add esp, 2
     pop bp
     ret 
 
-BootMessage: db "Hello, OS world!"
+BootMessage: db "read error"
     times 510-($-$$) db 0
     dw 0xaa55
